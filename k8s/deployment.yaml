@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-api
+  labels:
+    app.kubernetes.io/name: employee-api
+    app.kubernetes.io/part-of: employee-management-system
+    app.kubernetes.io/component: backend-api
+spec:
+  # Multi-replica deployment to demonstrate load distribution and high availability
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: employee-api
+  template:
+    metadata:
+      labels:
+        app: employee-api
+    spec:
+      containers:
+        - name: employee-api
+          image: acremployeeapi2026.azurecr.io/employeeapi:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "8080"
+            # Kubernetes Downward API: inject pod and node metadata as environment variables
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          # Kubernetes Liveness Probe: detects deadlocks and restarts unresponsive containers
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          # Kubernetes Readiness Probe: ensures container only receives traffic when ready
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          # Resource sizing for optimal AKS bin-packing and HPA autoscaling
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          # Security hardening: run as non-root container
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+

@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: employee-api-pdb
+spec:
+  # Guarantees that at least 2 pods remain operational during AKS cluster maintenance or node drain
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: employee-api
+

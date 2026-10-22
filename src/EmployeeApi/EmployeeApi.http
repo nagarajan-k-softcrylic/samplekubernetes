@@ -1,0 +1,54 @@
+@HostAddress = http://localhost:8080
+
+### 1. Kubernetes Learning Endpoint - Get Pod & Node Info
+GET {{HostAddress}}/api/info
+Accept: application/json
+
+### 2. Kubernetes Liveness Probe
+GET {{HostAddress}}/health
+Accept: application/json
+
+### 3. Kubernetes Readiness Probe
+GET {{HostAddress}}/ready
+Accept: application/json
+
+### 4. Get All Employees
+GET {{HostAddress}}/api/employees
+Accept: application/json
+
+### 5. Get Employee by ID
+GET {{HostAddress}}/api/employees/1
+Accept: application/json
+
+### 6. Create New Employee
+POST {{HostAddress}}/api/employees
+Content-Type: application/json
+
+{
+  "name": "Sarah Connor",
+  "email": "sarah.connor@contoso.com",
+  "department": "Security Operations"
+}
+
+### 7. Update Employee
+PUT {{HostAddress}}/api/employees/1
+Content-Type: application/json
+
+{
+  "name": "Alice Johnson",
+  "email": "alice.j@contoso.com",
+  "department": "Principal Cloud Architect"
+}
+
+### 8. Delete Employee
+DELETE {{HostAddress}}/api/employees/4
+
+### 9. Validation Error Test (Invalid Email)
+POST {{HostAddress}}/api/employees
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "not-a-valid-email",
+  "department": "IT"
+}

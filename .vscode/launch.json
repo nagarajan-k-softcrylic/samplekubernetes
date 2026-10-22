@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET: EmployeeApi (K8s Test - Port 8080)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/EmployeeApi/bin/Debug/net8.0/EmployeeApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/EmployeeApi",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8080",
+        "POD_NAME": "employee-api-test-pod-7g4xk",
+        "NODE_NAME": "aks-nodepool1-vmss000000"
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee-api-service
+  labels:
+    app.kubernetes.io/name: employee-api
+spec:
+  # Type LoadBalancer creates an Azure Public Load Balancer in AKS
+  # For internal-only access inside a VNet, add annotation:
+  # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: employee-api
+
